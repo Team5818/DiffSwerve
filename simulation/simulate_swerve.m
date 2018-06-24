@@ -53,6 +53,7 @@ for t = 1:length(time)
     x = A_d*x + B_d*u;
     y = C*x;
 end
+%plot stuff
 subplot(5,1,1)
 plot(time, phi)
 ylabel('phi (rad)')
@@ -63,11 +64,9 @@ ylabel('alphaprime (rad/s)')
 subplot(5,1,3)
 plot(time, v1)
 ylabel('motor 1 (V)')
-hold on
 subplot(5,1,4)
 plot(time,v2)
 ylabel('motor 2 (V)')
-hold on
 subplot(5,1,5)
 plot(time,v1-v2)
 ylabel('motor difference (V)')
