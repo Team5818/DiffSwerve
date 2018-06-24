@@ -26,7 +26,7 @@ A_d = expm(A*dt);
 B_d = pinv(A)*(A_d - eye(size(A_d)))*B;
 %[A_d, B_d] = c2d(A,B,dt);
 
-K = place(A_d,B_d,[.9+.1i, .9-.1i, .5]);
+K = place(A_d,B_d,[.9+.01i, .9-.01i, .6]);
 
 %initialize
 x = [0;0;0];
