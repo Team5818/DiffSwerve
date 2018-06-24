@@ -1,0 +1,11 @@
+.gradle/
+.classpath
+.project
+.factorypath
+.settings/
+dist/
+bin/
+build/
+gradleBuildDir/
+/.apt_generated/
+build.properties
