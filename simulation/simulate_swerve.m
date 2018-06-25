@@ -13,11 +13,21 @@ Kv = free_spd*2*pi/(12 - R*free_current);
 dt = .005;
 
 %State feedback matrices from mechanism model
-A = [0 1 0; 0 -2*Kt/(Jm*Kv*G*G*R) 0; 0 0 -2*Kt/(Jw*Kv*G*G*R)];
+A = [0 1 0 0; 0 -2*Kt/(Jm*Kv*G*G*R) 0 0; 0 0 0 1; 0 0 0 -2*Kt/(Jw*Kv*G*G*R)];
 
-B = [0 0; Kt/(Jm*G*R) Kt/(Jm*G*R); Kt/(Jw*G*R) -Kt/(Jw*G*R)];
+B = [0 0; Kt/(Jm*G*R) Kt/(Jm*G*R); 0 0; Kt/(Jw*G*R) -Kt/(Jw*G*R)];
 
-C = [1 0 0; 0 0 1];
+C = [1 0 1 0; 1 0 -1 0]; %can only observe motors
+
+% Kalman filter parameters
+o_noise = pi/180;
+
+p_noise = pi/180;
+
+Q = eye(size(A))*p_noise; %process noise
+
+R = eye(size(C,1))*o_noise; %observer noise
+
 
 %Feed forward magic sauce
 Vf = 12.0/(free_spd*G*2*pi);
@@ -26,32 +36,55 @@ A_d = expm(A*dt);
 B_d = pinv(A)*(A_d - eye(size(A_d)))*B;
 %[A_d, B_d] = c2d(A,B,dt);
 
-K = place(A_d,B_d,[.9+.01i, .9-.01i, .6]);
+%controller poles
+K = place(A_d,B_d,[.9+.01i, .9-.01i, .6, .3]);
 
 %initialize
-x = [0;0;0];
+x = [0;0;0;0];
+y = C*x;
+x_hat = x;
+P = eye(size(A));
+
 time = 0:dt:.5;
 phi = zeros(1,length(time));
 alphaprime = zeros(1,length(time));
 v1 = zeros(1,length(time));
 v2 = zeros(1,length(time));
+state = zeros(4,length(time));
+state_est = zeros(4,length(time));
+sensor = zeros(2,length(time));
 
 %simulate!
 for t = 1:length(time)
-    Rs = [pi/2;x(2);6*pi]; 
+    Rs = [pi/2;x_hat(2); x_hat(3); 28*pi]; 
 
-    u = K*(Rs-x) + [Vf*Rs(3); -Vf*Rs(3)];%error + velocity feed forward
+    u = K*(Rs-x_hat) + [Vf*Rs(4); -Vf*Rs(4)];%error + velocity feed forward; error calculation uses estimate
     %don't exceed max voltage
     u(u>12) = 12;
     u(u<-12) = -12;
     
+    %log states
     phi(t) = x(1);
-    alphaprime(t) = x(3);
+    alphaprime(t) = x(4);
     v1(t) = u(1);
     v2(t) = u(2);
-   
-    x = A_d*x + B_d*u;
-    y = C*x;
+    state(:,t) = x;
+    state_est(:,t) = x_hat;
+    sensor(:,t) = y;
+    
+    %update system
+    x = A_d*x + B_d*u + normrnd(0,p_noise,size(x));%simulate process noise
+    y = C*x + normrnd(0,o_noise,size(y));%simualte observation noise
+    
+    %kalman filter prediction step
+    P_ = A_d*P*A_d' + Q;
+    x_hat_ = A_d*x_hat + B_d*u;
+    
+    %kalman filer update step
+    Kk = P_*C'*inv(C*P_*C' + R);
+    x_hat = x_hat_ + Kk*(y - C*x_hat_);
+    P = P_ - Kk*C*P_;
+    
 end
 %plot stuff
 subplot(5,1,1)
@@ -71,3 +104,5 @@ subplot(5,1,5)
 plot(time,v1-v2)
 ylabel('motor difference (V)')
 xlabel('time (secs)')
+
+
