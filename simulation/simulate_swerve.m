@@ -32,12 +32,13 @@ R = eye(size(C,1))*o_noise; %observer noise
 %Feed forward magic sauce
 Vf = 12.0/(free_spd*G*2*pi);
 
-A_d = expm(A*dt);
-B_d = pinv(A)*(A_d - eye(size(A_d)))*B;
-%[A_d, B_d] = c2d(A,B,dt);
+%To run in Octave: Uncomment 36-37, comment out 38
+%A_d = expm(A*dt);
+%B_d = pinv(A)*(A_d - eye(size(A_d)))*B;
+[A_d, B_d] = c2d(A,B,dt);
 
-%controller poles
-K = place(A_d,B_d,[.9+.01i, .9-.01i, .6, .3]);
+%place controller poles with discrete LQR
+K = lqrd(A,B,eye(4)*5,eye(2),dt);
 
 %initialize
 x = [0;0;0;0];
