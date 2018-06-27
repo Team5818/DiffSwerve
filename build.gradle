@@ -1,6 +1,12 @@
 plugins {
     id "org.rivierarobotics.frcgrantle" version "0.1.9"
 }
+
+dependencies {
+    File libDir = file('libs/ejml-v0.34-libs')
+    compile files(libDir.listFiles())
+}
+
 grantle.with {
     packageBase = 'org.rivierarobotics.robot'
     teamNumber = 5818
