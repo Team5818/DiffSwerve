@@ -20,13 +20,13 @@ B = [0 0; Kt/(Jm*G*R) Kt/(Jm*G*R); 0 0; Kt/(Jw*G*R) -Kt/(Jw*G*R)];
 C = [1 0 1 0; 1 0 -1 0]; %can only observe motors
 
 % Kalman filter parameters
-o_noise = pi/180;
+o_noise = pi/360;
 
-p_noise = pi/180;
+p_noise = pi/360;
 
 Q = eye(size(A))*p_noise; %process noise
 
-R = eye(size(C,1))*o_noise; %observer noise
+R = eye(size(C,1))*o_noise; %observer noises
 
 
 %Feed forward magic sauce
@@ -39,6 +39,8 @@ Vf = 12.0/(free_spd*G*2*pi);
 
 %place controller poles with discrete LQR
 K = lqrd(A,B,eye(4)*5,eye(2),dt);
+f = fopen('GainMatrix.txt','w');
+fprintf(f,mat2str(K)); %write out gain matrix for use in other code
 
 %initialize
 x = [0;0;0;0];
@@ -57,7 +59,7 @@ sensor = zeros(2,length(time));
 
 %simulate!
 for t = 1:length(time)
-    Rs = [pi/2;x_hat(2); x_hat(3); 28*pi]; 
+    Rs = [pi/2; x_hat(2); x_hat(3); 28*pi]; 
 
     u = K*(Rs-x_hat) + [Vf*Rs(4); -Vf*Rs(4)];%error + velocity feed forward; error calculation uses estimate
     %don't exceed max voltage
