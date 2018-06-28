@@ -39,8 +39,6 @@ Vf = 12.0/(free_spd*G*2*pi);
 
 %place controller poles with discrete LQR
 K = lqrd(A,B,eye(4)*5,eye(2),dt);
-f = fopen('GainMatrix.txt','w');
-fprintf(f,mat2str(K)); %write out gain matrix for use in other code
 
 %initialize
 x = [0;0;0;0];
@@ -108,4 +106,16 @@ plot(time,v1-v2)
 ylabel('motor difference (V)')
 xlabel('time (secs)')
 
-
+%write out matrices to files
+f = fopen('Ad_mat.txt','w');
+fprintf(f,[num2str(size(A_d,1)) ' ' num2str(size(A_d,2)) ' real\n']);
+fclose(f);
+dlmwrite('Ad_mat.txt',A_d,'-append','delimiter',' ');
+f = fopen('Bd_mat.txt','w');
+fprintf(f,[num2str(size(B_d,1)) ' ' num2str(size(B_d,2)) ' real\n']);
+fclose(f);
+dlmwrite('Bd_mat.txt',B_d,'-append','delimiter',' ');
+f = fopen('K_mat.txt','w');
+fprintf(f,[num2str(size(K,1)) ' ' num2str(size(K,2)) ' real\n']);
+fclose(f);
+dlmwrite('K_mat.txt',K,'-append','delimiter',' ');
