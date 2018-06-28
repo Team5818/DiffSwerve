@@ -3,8 +3,10 @@ plugins {
 }
 
 dependencies {
-    File libDir = file('libs/ejml-v0.34-libs')
-    compile files(libDir.listFiles())
+    File ejmlDir = file('libs/ejml-v0.34-libs')
+    File jchartDir = file('libs/jf')
+    compile files(ejmlDir.listFiles())
+    compile files(jchartDir.listFiles())
 }
 
 grantle.with {
