@@ -2,7 +2,7 @@ package org.rivierarobotics.subsystems;
 
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.robot.RobotConstants;
-import org.rivierarobotics.subsystems.SwerveModule.ModuleID;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -15,17 +15,17 @@ import org.rivierarobotics.mathutil.Vector2d;
 
 public class DriveTrain extends Subsystem {
 
-    private SwerveModule fl;
+    private DiffSwerveModule fl;
     //private SwerveModule fr;
     //private SwerveModule bl;
-    private SwerveModule br;
+    private DiffSwerveModule br;
     private PigeonIMU gyro;
 
     public DriveTrain() {
-        fl = new SwerveModule(SwerveModule.ModuleID.FL);
+        fl = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
         //fr = new SwerveModule(SwerveModule.ModuleID.FR);
         //bl = new SwerveModule(SwerveModule.ModuleID.BL);
-        br = new SwerveModule(SwerveModule.ModuleID.BR);
+        br = new DiffSwerveModule(DiffSwerveModule.ModuleID.BR);
         gyro = new PigeonIMU(RobotConstants.GYRO_PORT);
     }
 
@@ -54,7 +54,7 @@ public class DriveTrain extends Subsystem {
         br.setDrivePower(0.0);
     }
     
-    public SwerveModule getModule(ModuleID id) {
+    public DiffSwerveModule getModule(ModuleID id) {
         switch (id) {
 //           case FR:
 //                return fr;

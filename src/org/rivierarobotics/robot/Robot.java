@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.SwerveModule.ModuleID;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 /**
  * The VM is configured to automatically run this class, and to call the

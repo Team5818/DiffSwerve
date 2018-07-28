@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
-public class SwerveModule {
+public class DiffSwerveModule {
 
     public enum ModuleID {
         FR, FL, BL, BR;
@@ -45,7 +45,7 @@ public class SwerveModule {
     private ModuleID modID;
     private final double zeroPos;
 
-    public SwerveModule(ModuleID id) {
+    public DiffSwerveModule(ModuleID id) {
         modID = id;
         switch (modID) {
             case FR:

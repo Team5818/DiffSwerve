@@ -2,8 +2,8 @@ package org.rivierarobotics.commands;
 
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.SwerveModule;
-import org.rivierarobotics.subsystems.SwerveModule.ModuleID;
+import org.rivierarobotics.subsystems.DiffSwerveModule;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SetModulePower extends Command{
     private DriveTrain dt = Robot.runningrobot.dt;
     private double power;
-    private SwerveModule mod;
+    private DiffSwerveModule mod;
     
     public SetModulePower(double pow, ModuleID id) {
         power = pow;
