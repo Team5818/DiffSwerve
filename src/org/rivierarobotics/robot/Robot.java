@@ -1,12 +1,14 @@
 package org.rivierarobotics.robot;
 
+import org.rivierarobotics.commands.ModuleOpenLoopCommand;
 import org.rivierarobotics.drivers.Driver;
+import org.rivierarobotics.subsystems.DiffSwerveModule;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,15 +24,16 @@ public class Robot extends IterativeRobot {
     String autoSelected;
     SendableChooser<String> chooser = new SendableChooser<>();
     
-    public DriveTrain dt;
     public Driver driver;
+    public DiffSwerveModule mod;
+    public ModuleOpenLoopCommand control;
     public static Robot runningrobot;
 
     public Robot() {
         runningrobot = this;
-        dt = new DriveTrain();
+        mod = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
         driver = new Driver();
-
+        control = new ModuleOpenLoopCommand(driver.leftJoy,driver.rightJoy);
     }
 
     /**
@@ -39,7 +42,6 @@ public class Robot extends IterativeRobot {
      */
     @Override
     public void robotInit() {
-        dt.resetGyro();
         chooser.addDefault("Default Auto", defaultAuto);
         chooser.addObject("My Auto", customAuto);
         SmartDashboard.putData("Auto choices", chooser);
@@ -82,7 +84,8 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void teleopInit() {
-        dt.resetGyro();
+        mod.zeroEncs();
+        control.start();
     }
 
     /**
@@ -106,12 +109,10 @@ public class Robot extends IterativeRobot {
     }
 
     public void printSmartDash() {
-        SmartDashboard.putNumber("FL pos", dt.getModule(ModuleID.FL).getPositionTrunc());
-        SmartDashboard.putNumber("BR pos", dt.getModule(ModuleID.BR).getPositionTrunc());
-        SmartDashboard.putNumber("FL rad", dt.getModule(ModuleID.FL).getPositionRad());
-        SmartDashboard.putNumber("BR rad", dt.getModule(ModuleID.BR).getPositionRad());
-        SmartDashboard.putNumber("FL raw", dt.getModule(ModuleID.FL).getPosition());
-        SmartDashboard.putNumber("BR raw", dt.getModule(ModuleID.BR).getPosition());
-        SmartDashboard.putNumber("Gyro", dt.getGyroHeading());
+        double p1 = mod.getMotor1Pos();
+        double p2 = mod.getMotor2Pos();
+        SmartDashboard.putNumber("Motor 1 Position", p1);
+        SmartDashboard.putNumber("Motor 2 Position", p2);
+        SmartDashboard.putNumber("Wrapped", ((p1 + p2)/2.0)%400);
     }
 }

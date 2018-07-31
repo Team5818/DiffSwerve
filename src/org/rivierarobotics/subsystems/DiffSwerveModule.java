@@ -1,6 +1,5 @@
 package org.rivierarobotics.subsystems;
 
-import org.rivierarobotics.mathutil.MathUtil;
 import org.rivierarobotics.mathutil.Vector2d;
 import org.rivierarobotics.robot.RobotConstants;
 
@@ -11,11 +10,7 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class DiffSwerveModule {
@@ -28,7 +23,7 @@ public class DiffSwerveModule {
     private static final int POSITION_PID_IDX = 1;
     private static final int VELOCITY_GAINS_SLOT = 0;
     private static final int POSITION_GAINS_SLOT = 1;
-    private static final double POSITION_FEEDBACK_SCALE = 0.5;
+    private static final double POSITION_FEEDBACK_SCALE = 2*Math.PI/400/2;
     private static final int REMOTE_0 = 0;
     private static final int REMOTE_1 = 1;
     private static final int TIMEOUT = 10;
@@ -79,36 +74,59 @@ public class DiffSwerveModule {
         motor2.setSensorPhase(false);
         
         //set (M1_ENC + M2_ENC)/2 to be feedback sensor on M2
-        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        motor2.configRemoteFeedbackFilter(motor1.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, TIMEOUT);
-        motor2.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, TIMEOUT);
-        motor2.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, TIMEOUT);
-        motor2.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, POSITION_PID_IDX, TIMEOUT);
-        motor2.configSelectedFeedbackCoefficient(POSITION_FEEDBACK_SCALE, POSITION_PID_IDX, TIMEOUT);
-        
-        //set status frames
-        motor2.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, TIMEOUT);
-        motor2.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, TIMEOUT);
-        
-        //set gains
-        motor2.selectProfileSlot(POSITION_GAINS_SLOT, POSITION_PID_IDX);
-        motor2.config_kP(POSITION_GAINS_SLOT, kP_POS);
-        motor2.config_kI(POSITION_GAINS_SLOT, kI_POS);
-        motor2.config_kD(POSITION_GAINS_SLOT, kD_POS);
-        
-        //setup following on left so that aux PID ouput is inverted
-        motor2.configAuxPIDPolarity(false);
-        motor1.follow(motor2, FollowerType.AuxOutput1);
+        motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0, TIMEOUT);
+        motor2.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,0, TIMEOUT);
+
+//        motor2.configRemoteFeedbackFilter(motor1.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, TIMEOUT);
+//        motor2.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, TIMEOUT);
+//        motor2.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, TIMEOUT);
+//        motor2.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, POSITION_PID_IDX, TIMEOUT);
+//        motor2.configSelectedFeedbackCoefficient(1.0, POSITION_PID_IDX, TIMEOUT);
+//        
+//        //set status frames
+//        motor2.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, TIMEOUT);
+//        motor2.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20, TIMEOUT);
+//        
+//        //set gains
+//        motor2.selectProfileSlot(POSITION_GAINS_SLOT, POSITION_PID_IDX);
+//        motor2.config_kP(POSITION_GAINS_SLOT, kP_POS, TIMEOUT);
+//        motor2.config_kI(POSITION_GAINS_SLOT, kI_POS,TIMEOUT);
+//        motor2.config_kD(POSITION_GAINS_SLOT, kD_POS,TIMEOUT);
+//        
+//        //setup following on left so that aux PID ouput is inverted
+//        motor2.configAuxPIDPolarity(false, TIMEOUT);
 
     }    
 
     public Vector2d getPosVec() {
         return positionVec;
     }
+    
+    public void setMotor1Power(double pow) {
+        motor1.set(ControlMode.PercentOutput, pow);
+    }
+    
+    public void setMotor2Power(double pow) {
+        motor2.set(ControlMode.PercentOutput, pow);
+    }
+    
+    public void zeroEncs(){
+        motor1.setSelectedSensorPosition(0, 0, TIMEOUT);
+        motor2.setSelectedSensorPosition(0, 0, TIMEOUT);
+    }
+    
+    public double getMotor1Pos() {
+        return motor1.getSelectedSensorPosition(TIMEOUT);
+    }
+    
+    public double getMotor2Pos() {
+        return motor2.getSelectedSensorPosition(TIMEOUT);
+    }
 
     public void setToVectorDumb(Vector2d drive) {
         double forward = drive.getMagnitude();
         double angle = drive.getAngle();
         motor2.set(ControlMode.PercentOutput, forward, DemandType.AuxPID, angle);
+        motor1.follow(motor2, FollowerType.AuxOutput1);
     }
 }

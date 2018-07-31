@@ -1,12 +1,8 @@
 package org.rivierarobotics.drivers;
 
-import org.rivierarobotics.commands.SetModulePosition;
-import org.rivierarobotics.commands.SetModulePower;
 import org.rivierarobotics.robot.RobotConstants;
-import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 public class Driver {
     
