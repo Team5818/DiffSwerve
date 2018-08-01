@@ -1,5 +1,6 @@
 package org.rivierarobotics.robot;
 
+import org.rivierarobotics.commands.ModuleClosedLoopCommand;
 import org.rivierarobotics.commands.ModuleOpenLoopCommand;
 import org.rivierarobotics.drivers.Driver;
 import org.rivierarobotics.subsystems.DiffSwerveModule;
@@ -26,14 +27,14 @@ public class Robot extends IterativeRobot {
     
     public Driver driver;
     public DiffSwerveModule mod;
-    public ModuleOpenLoopCommand control;
+    public ModuleClosedLoopCommand control;
     public static Robot runningrobot;
 
     public Robot() {
         runningrobot = this;
         mod = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
         driver = new Driver();
-        control = new ModuleOpenLoopCommand(driver.leftJoy,driver.rightJoy);
+        control = new ModuleClosedLoopCommand(driver.leftJoy,driver.rightJoy);
     }
 
     /**
@@ -84,8 +85,8 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void teleopInit() {
-        mod.zeroEncs();
         control.start();
+        mod.zeroPosition();
     }
 
     /**
@@ -113,6 +114,6 @@ public class Robot extends IterativeRobot {
         double p2 = mod.getMotor2Pos();
         SmartDashboard.putNumber("Motor 1 Position", p1);
         SmartDashboard.putNumber("Motor 2 Position", p2);
-        SmartDashboard.putNumber("Wrapped", ((p1 + p2)/2.0)%400);
+        SmartDashboard.putNumber("Wrapped", mod.getModulePositionTrunc());
     }
 }
