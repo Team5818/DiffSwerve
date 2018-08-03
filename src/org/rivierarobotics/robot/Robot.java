@@ -115,5 +115,6 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putNumber("Motor 1 Position", p1);
         SmartDashboard.putNumber("Motor 2 Position", p2);
         SmartDashboard.putNumber("Wrapped", mod.getModulePositionTrunc());
+        SmartDashboard.putNumber("Module vel", mod.getModuleVel());
     }
 }

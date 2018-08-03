@@ -28,7 +28,7 @@ public class ModuleOpenLoopCommand extends Command{
         double vel;
         double rot;
         if(MathUtil.outOfDeadband(velStick, DEADBAND)){
-             vel = MathUtil.adjustDeadband(velStick, DEADBAND, true, false).getY();
+             vel = .8;//MathUtil.adjustDeadband(velStick, DEADBAND, true, false).getY();
         }
         else {
             vel = 0.0;
