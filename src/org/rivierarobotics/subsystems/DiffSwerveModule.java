@@ -37,6 +37,7 @@ public class DiffSwerveModule {
     private WPI_TalonSRX motor1;
     private WPI_TalonSRX motor2;
     private ModuleID modID;
+    private double positionOffset;
 
     public DiffSwerveModule(ModuleID id) {
         modID = id;
@@ -44,7 +45,7 @@ public class DiffSwerveModule {
             case FR:
                 positionVec = new Vector2d(RobotConstants.ROBOT_WIDTH/2.0, RobotConstants.ROBOT_LENGTH/2.0);
                 motor1 = new WPI_TalonSRX(RobotConstants.FR_MOTOR_1);
-                motor2 = new WPI_TalonSRX(RobotConstants.FR_MOTOR_1);
+                motor2 = new WPI_TalonSRX(RobotConstants.FR_MOTOR_2);
                 break;
             case FL:
                 positionVec = new Vector2d(-RobotConstants.ROBOT_WIDTH/2.0, RobotConstants.ROBOT_LENGTH/2.0);
@@ -67,16 +68,16 @@ public class DiffSwerveModule {
         //polarities
         motor1.setInverted(false);
         motor2.setInverted(false);
-        motor1.setSensorPhase(true);
-        motor2.setSensorPhase(true);
+        motor1.setSensorPhase(false);
+        motor2.setSensorPhase(false);
         
         //set (M1_ENC + M2_ENC)/2 to be feedback sensor on M2
         motor1.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,POSITION_PID_IDX, TIMEOUT);
 
         motor2.configRemoteFeedbackFilter(motor1.getDeviceID(), RemoteSensorSource.TalonSRX_SelectedSensor, REMOTE_0, TIMEOUT);
-        motor2.configSensorTerm(SensorTerm.Diff0, FeedbackDevice.RemoteSensor0, TIMEOUT);
-        motor2.configSensorTerm(SensorTerm.Diff1, FeedbackDevice.QuadEncoder, TIMEOUT);
-        motor2.configSelectedFeedbackSensor(FeedbackDevice.SensorDifference, POSITION_PID_IDX, TIMEOUT);
+        motor2.configSensorTerm(SensorTerm.Sum0, FeedbackDevice.RemoteSensor0, TIMEOUT);
+        motor2.configSensorTerm(SensorTerm.Sum1, FeedbackDevice.QuadEncoder, TIMEOUT);
+        motor2.configSelectedFeedbackSensor(FeedbackDevice.SensorSum, POSITION_PID_IDX, TIMEOUT);
         
         //set status frames
         motor2.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20, TIMEOUT);
@@ -89,8 +90,8 @@ public class DiffSwerveModule {
         motor2.config_kD(POSITION_GAINS_SLOT, kD_POS,TIMEOUT);
         
         //invert aux pid output on follower
-        motor2.configAuxPIDPolarity(true, TIMEOUT);
-
+        motor2.configAuxPIDPolarity(false, TIMEOUT);
+        motor1.configAuxPIDPolarity(false, TIMEOUT);
     }    
 
     public Vector2d getPosVec() {
@@ -106,28 +107,35 @@ public class DiffSwerveModule {
     }
 
     public double getMotor1Pos() {
-        return motor1.getSelectedSensorPosition(TIMEOUT);
+        return motor1.getSelectedSensorPosition(POSITION_PID_IDX);
     }
     
     public double getMotor2Pos() {
-        return motor2.getSelectedSensorPosition(TIMEOUT);
+        return motor2.getSelectedSensorPosition(POSITION_PID_IDX);
     }
     
     public void zeroPosition() {
-        motor1.setSelectedSensorPosition(0, 0, TIMEOUT);
-        motor2.setSelectedSensorPosition(0, 0, TIMEOUT);
+        positionOffset = motor2.getSelectedSensorPosition(POSITION_PID_IDX);
     }
     
     public int getModulePositionTrunc() {
-        return MathUtil.boundHalfAngleNative(motor2.getSelectedSensorPosition(TIMEOUT), STEERING_COUNTS_PER_REV);
+        return MathUtil.boundHalfAngleNative(motor2.getSelectedSensorPosition(POSITION_PID_IDX), STEERING_COUNTS_PER_REV);
+    }
+    
+    public void stop() {
+        motor1.set(ControlMode.PercentOutput, 0.0);
+        motor2.set(ControlMode.PercentOutput, 0.0);
     }
     
     public void setPositionAndSpeed(double drive, int target) {
-        int diff = MathUtil.boundHalfAngleNative(target - getModulePositionTrunc(), STEERING_COUNTS_PER_REV);
+        int diff = MathUtil.boundHalfAngleNative(target - (int)getMotor2Pos(), STEERING_COUNTS_PER_REV);
         double setpoint = getMotor2Pos() + diff;
+        SmartDashboard.putNumber("Differentce:", diff);
         SmartDashboard.putNumber("setpoint", setpoint);
-        motor2.set(ControlMode.Position, 200, DemandType.ArbitraryFeedForward, .5);
-        motor1.follow(motor2, FollowerType.AuxOutput1);
+        motor2.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, drive);
+        motor1.set(ControlMode.Follower, motor2.getDeviceID(), DemandType.ArbitraryFeedForward, -2*drive);
+        SmartDashboard.putNumber("M1 pow", motor1.getMotorOutputPercent());
+        SmartDashboard.putNumber("M2 pow", motor2.getMotorOutputPercent());
         SmartDashboard.putNumber("error", motor2.getClosedLoopError(0));
     }
 
