@@ -26,13 +26,15 @@ public class Robot extends IterativeRobot {
     SendableChooser<String> chooser = new SendableChooser<>();
     
     public Driver driver;
-    public DiffSwerveModule mod;
+    public DiffSwerveModule mod1;
+    public DiffSwerveModule mod2;
     public ModuleClosedLoopCommand control;
     public static Robot runningrobot;
 
     public Robot() {
         runningrobot = this;
-        mod = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
+        mod1 = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
+        mod2 = new DiffSwerveModule(DiffSwerveModule.ModuleID.BR);
         driver = new Driver();
         control = new ModuleClosedLoopCommand(driver.leftJoy,driver.rightJoy);
     }
@@ -85,8 +87,9 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void teleopInit() {
+        mod1.zeroModule();
+        mod2.zeroModule();
         control.start();
-        mod.zeroPosition();
     }
 
     /**
@@ -110,11 +113,11 @@ public class Robot extends IterativeRobot {
     }
 
     public void printSmartDash() {
-        double p1 = mod.getMotor1Pos();
-        double p2 = mod.getMotor2Pos();
+        double p1 = mod1.getMotor1Pos();
+        double p2 = mod1.getMotor2Pos();
         SmartDashboard.putNumber("Motor 1 Position", p1);
         SmartDashboard.putNumber("Motor 2 Position", p2);
-        SmartDashboard.putNumber("Wrapped", mod.getModulePositionTrunc());
-        SmartDashboard.putNumber("Module vel", mod.getModuleVel());
+        SmartDashboard.putNumber("Wrapped", mod1.getModulePositionTrunc());
+        SmartDashboard.putNumber("Module vel", mod1.getModuleVel());
     }
 }

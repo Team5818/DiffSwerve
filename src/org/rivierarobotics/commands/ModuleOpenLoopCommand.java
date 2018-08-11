@@ -18,7 +18,7 @@ public class ModuleOpenLoopCommand extends Command{
     private Joystick rotStick;
    
     public ModuleOpenLoopCommand(Joystick vel, Joystick spin) {
-        mod = Robot.runningrobot.mod;
+        mod = Robot.runningrobot.mod1;
         velStick = vel;
         rotStick = spin;
     }

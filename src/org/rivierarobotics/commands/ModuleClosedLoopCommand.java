@@ -14,12 +14,13 @@ public class ModuleClosedLoopCommand extends Command{
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;
     
-    private DiffSwerveModule mod;
+    private DiffSwerveModule mod1, mod2;
     private Joystick velStick;
     private Joystick rotStick;
    
     public ModuleClosedLoopCommand(Joystick vel, Joystick spin) {
-        mod = Robot.runningrobot.mod;
+        mod1 = Robot.runningrobot.mod1;
+        mod2 = Robot.runningrobot.mod2;
         velStick = vel;
         rotStick = spin;
     }
@@ -27,7 +28,7 @@ public class ModuleClosedLoopCommand extends Command{
     @Override
     public void execute() {
         double vel;
-        int target;
+        Vector2d transVec;
         if(MathUtil.outOfDeadband(velStick, DEADBAND)){
              vel = MathUtil.adjustDeadband(velStick, DEADBAND, true, false).getY();
         }
@@ -36,15 +37,16 @@ public class ModuleClosedLoopCommand extends Command{
         }
         
         if(MathUtil.outOfDeadband(rotStick, DEADBAND)) {
-             target = (int) (MathUtil.wrapAngleRad(rotStick.getDirectionRadians())/(2 * Math.PI) * DiffSwerveModule.STEERING_COUNTS_PER_REV);
+            transVec = MathUtil.adjustDeadband(rotStick, DEADBAND, false, false);
         }
         else {
-             target = mod.getModulePositionTrunc();
+            transVec = new Vector2d(0.0,0.0);
         }
         
         
-        SmartDashboard.putNumber("Target", target);
-        mod.setPositionAndSpeed(vel, target);
+        mod1.setToVectorSmart(transVec.scale(.5));
+        mod2.setToVectorSmart(transVec.scale(.5));
+
     }
 
     
