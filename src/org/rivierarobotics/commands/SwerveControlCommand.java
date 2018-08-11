@@ -42,12 +42,12 @@ public class SwerveControlCommand extends Command{
         }
         else {
             spinVal = 0.0;
-//            if(Double.isNaN(setHeading)) {
-//                spinVal = 0.0;
-//            }
-//            else {
-//                spinVal = kHeading*MathUtil.boundHalfAngleDeg(setHeading - dt.getGyroHeading());
-//            }
+            if(Double.isNaN(setHeading)) {
+                spinVal = 0.0;
+            }
+            else {
+                spinVal = kHeading*MathUtil.boundHalfAngleDeg(setHeading - dt.getGyroHeading());
+            }
         }
         dt.swerve(spinVal, transVec);
     }

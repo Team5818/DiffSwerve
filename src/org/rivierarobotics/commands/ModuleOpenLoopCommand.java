@@ -19,6 +19,7 @@ public class ModuleOpenLoopCommand extends Command{
     private Joystick rotStick;
    
     public ModuleOpenLoopCommand(Joystick vel, Joystick spin) {
+        requires(Robot.runningrobot.dt);
         mod = Robot.runningrobot.dt.getModule(ModuleID.FL);
         velStick = vel;
         rotStick = spin;

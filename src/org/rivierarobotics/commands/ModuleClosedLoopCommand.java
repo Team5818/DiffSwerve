@@ -20,6 +20,7 @@ public class ModuleClosedLoopCommand extends Command{
     private Joystick rotStick;
    
     public ModuleClosedLoopCommand(Joystick vel, Joystick spin) {
+        requires(Robot.runningrobot.dt);
         mod1 = Robot.runningrobot.dt.getModule(ModuleID.FL);
         mod2 = Robot.runningrobot.dt.getModule(ModuleID.BR);
         velStick = vel;
