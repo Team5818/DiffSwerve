@@ -51,8 +51,8 @@ public class SwerveCalculator {
      */
     public static Vector2d calculateDriveVector(double gyroHeading, double rotVal, Vector2d transVecF,
             Vector2d modulePos) {
-        Vector2d transVecR = transVecF.rotate(gyroHeading);
-        Vector2d rotVec = modulePos.normalize(rotVal);
+        Vector2d transVecR = transVecF.rotate(-gyroHeading);
+        Vector2d rotVec = modulePos.normalize(rotVal);//.rotate(Math.PI/2);
         Vector2d driveVec = transVecR.add(rotVec);
         return driveVec;
     }

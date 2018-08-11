@@ -4,6 +4,7 @@ import org.rivierarobotics.mathutil.MathUtil;
 import org.rivierarobotics.mathutil.Vector2d;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DiffSwerveModule;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -18,7 +19,7 @@ public class ModuleOpenLoopCommand extends Command{
     private Joystick rotStick;
    
     public ModuleOpenLoopCommand(Joystick vel, Joystick spin) {
-        mod = Robot.runningrobot.mod1;
+        mod = Robot.runningrobot.dt.getModule(ModuleID.FL);
         velStick = vel;
         rotStick = spin;
     }

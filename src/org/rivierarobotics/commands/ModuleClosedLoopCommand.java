@@ -4,6 +4,7 @@ import org.rivierarobotics.mathutil.MathUtil;
 import org.rivierarobotics.mathutil.Vector2d;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DiffSwerveModule;
+import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
@@ -19,8 +20,8 @@ public class ModuleClosedLoopCommand extends Command{
     private Joystick rotStick;
    
     public ModuleClosedLoopCommand(Joystick vel, Joystick spin) {
-        mod1 = Robot.runningrobot.mod1;
-        mod2 = Robot.runningrobot.mod2;
+        mod1 = Robot.runningrobot.dt.getModule(ModuleID.FL);
+        mod2 = Robot.runningrobot.dt.getModule(ModuleID.BR);
         velStick = vel;
         rotStick = spin;
     }

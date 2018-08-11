@@ -18,7 +18,7 @@ public class RobotConstants {
 
     public static final int BL_MOTOR_2 = 0;
     
-    public static final int GYRO_PORT = 15;
+    public static final int GYRO_PORT = 5;
     
     public static final int LEFT_JOYSTICK_PORT = 0;
     

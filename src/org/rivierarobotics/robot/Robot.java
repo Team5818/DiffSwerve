@@ -5,6 +5,7 @@ import org.rivierarobotics.commands.ModuleOpenLoopCommand;
 import org.rivierarobotics.drivers.Driver;
 import org.rivierarobotics.subsystems.DiffSwerveModule;
 import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
+import org.rivierarobotics.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -26,17 +27,13 @@ public class Robot extends IterativeRobot {
     SendableChooser<String> chooser = new SendableChooser<>();
     
     public Driver driver;
-    public DiffSwerveModule mod1;
-    public DiffSwerveModule mod2;
-    public ModuleClosedLoopCommand control;
+    public DriveTrain dt;
     public static Robot runningrobot;
 
     public Robot() {
         runningrobot = this;
-        mod1 = new DiffSwerveModule(DiffSwerveModule.ModuleID.FL);
-        mod2 = new DiffSwerveModule(DiffSwerveModule.ModuleID.BR);
+        dt = new DriveTrain();
         driver = new Driver();
-        control = new ModuleClosedLoopCommand(driver.leftJoy,driver.rightJoy);
     }
 
     /**
@@ -87,9 +84,8 @@ public class Robot extends IterativeRobot {
     
     @Override
     public void teleopInit() {
-        mod1.zeroModule();
-        mod2.zeroModule();
-        control.start();
+        dt.resetGyro();
+        dt.zeroAll();
     }
 
     /**
@@ -113,11 +109,6 @@ public class Robot extends IterativeRobot {
     }
 
     public void printSmartDash() {
-        double p1 = mod1.getMotor1Pos();
-        double p2 = mod1.getMotor2Pos();
-        SmartDashboard.putNumber("Motor 1 Position", p1);
-        SmartDashboard.putNumber("Motor 2 Position", p2);
-        SmartDashboard.putNumber("Wrapped", mod1.getModulePositionTrunc());
-        SmartDashboard.putNumber("Module vel", mod1.getModuleVel());
+        SmartDashboard.putNumber("Gyro", dt.getGyroHeading());
     }
 }
