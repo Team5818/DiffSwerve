@@ -138,7 +138,7 @@ public class DiffSwerveModule {
         int diff = MathUtil.boundHalfAngleNative(target - (int)getMotor2Pos(), STEERING_COUNTS_PER_REV);
         double setpoint = getMotor2Pos() + diff;
         motor2.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, drive);
-        motor1.set(ControlMode.Follower, motor2.getDeviceID(), DemandType.ArbitraryFeedForward, -2.0*drive);
+        motor1.follow(motor1, FollowerType.AuxOutput1);
     }
     
     public void setPositionAndSpeedRad(double drive, double rad) {
