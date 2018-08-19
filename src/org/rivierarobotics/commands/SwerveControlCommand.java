@@ -8,10 +8,10 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
+/**
+ * Command for joystick control of swerve drivetrain
+ */
 public class SwerveControlCommand extends Command{
-    /**
-     * Command for joystick control of swerve drivetrain
-     */
     
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;

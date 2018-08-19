@@ -42,11 +42,10 @@ public class DriveTrain extends Subsystem {
     }
 
     /**
+     * Coordinates the classic spinning-and-translating motion of a field-centered independent swerve
      * @param rot - desired rotational velocity of the robot
      * @param trans- desired field-centric translation vector
      * 
-     * Coordinates the classic spinning-and-translating motion of a field-centered independent swerve
-     *
      */
     public void swerve(double rot, Vector2d trans) {
         Vector2d[] swerveVecs = SwerveCalculator.calculateAllModules(Math.toRadians(getGyroHeading()), rot, trans, fl.getPosVec(), br.getPosVec());

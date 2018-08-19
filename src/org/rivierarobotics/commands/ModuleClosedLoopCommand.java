@@ -9,11 +9,11 @@ import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
+
+/**
+ * Command for testing individual modules in closed loop
+ */
 public class ModuleClosedLoopCommand extends Command{
-    
-    /**
-     * Command for testing individual modules in closed loop
-     */
     
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;

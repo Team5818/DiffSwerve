@@ -1,5 +1,9 @@
 package org.rivierarobotics.robot;
 
+/**
+ * 
+ * Just a few constants
+ */
 public class RobotConstants {
     
     public static final int FL_MOTOR_1 = 1;

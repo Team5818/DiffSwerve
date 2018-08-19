@@ -31,6 +31,10 @@ public class SwerveCalculator {
     }
 
     /**
+     * Works by calculating a "rotation vector" which is perpendicular
+     * to the module's position vector and has a magnitude proportional
+     * to the desired rotation speed. This vector is added to the
+     * translation vector to calculate the drive vector.
      * 
      * @param gyroHeading
      *            - robot heading
@@ -42,14 +46,10 @@ public class SwerveCalculator {
      *            - position vector of module relative to rotation center
      * @return Vector representing wheel angle and speed
      * 
-     *         Works by calculating a "rotation vector" which is perpendicular
-     *         to the module's position vector and has a magnitude proportional
-     *         to the desired rotation speed. This vector is added to the
-     *         translation vector to calculate the drive vector.
      */
     public static Vector2d calculateDriveVector(double gyroHeading, double rotVal, Vector2d transVecF,
             Vector2d modulePos) {
-        Vector2d transVecR = transVecF.rotate(-gyroHeading);
+        Vector2d transVecR = transVecF.rotate(gyroHeading);
         Vector2d rotVec = modulePos.normalize(rotVal).rotate(Math.PI/2);
         Vector2d driveVec = transVecR.add(rotVec);
         return driveVec;
