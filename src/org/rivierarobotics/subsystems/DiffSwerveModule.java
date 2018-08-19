@@ -12,12 +12,17 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.SensorTerm;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 
 public class DiffSwerveModule {
+    /**
+     * Class representing a single Diff Swerve Module. Powered by two miniCIMs; turns the module and the wheel
+     * by controlling the speed difference between the two motors
+     */
 
     public enum ModuleID {
+        /**
+         * Enum to mark which module we're talking about
+         */
         FR, FL, BL, BR;
     }
     
@@ -39,6 +44,13 @@ public class DiffSwerveModule {
     private WPI_TalonSRX motor2;
     private ModuleID modID;
 
+    /**
+     * 
+     * @param id - ID of the module we are making
+     *      
+     *      Note: the positionVec field is the module's position relative to the rotation center.
+     *      This field must be set properly for the robot to rotate correctly.
+     */
     public DiffSwerveModule(ModuleID id) {
         modID = id;
         switch (modID) {
@@ -106,20 +118,33 @@ public class DiffSwerveModule {
 
     public double getMotor1Pos() {
         return motor1.getSelectedSensorPosition(POSITION_MOTION_MAGIC_IDX);
+        
     }
     
+    /**
+     * return The sum of the encoders on both motors (e.g. the module angular position)
+     */
     public double getMotor2Pos() {
         return motor2.getSelectedSensorPosition(POSITION_MOTION_MAGIC_IDX);
     }
     
+    /**
+     * return the module angular velocity
+     */
     public double getModuleVel() {
         return motor2.getSelectedSensorVelocity(POSITION_MOTION_MAGIC_IDX);
     }
     
+    /**
+     * return (sum of both encoders) % (the number of ticks per rev), so that the position wraps around
+     */
     public int getModulePositionTrunc() {
         return MathUtil.boundHalfAngleNative(motor2.getSelectedSensorPosition(POSITION_MOTION_MAGIC_IDX), STEERING_COUNTS_PER_REV);
     }
     
+    /**
+     * return angular position of the module in radians
+     */
     public double getModulePositionRad() {
         return MathUtil.boundHalfAngleRad((double)(getModulePositionTrunc())/(double)STEERING_COUNTS_PER_REV * Math.PI * 2.0);
     }
@@ -134,18 +159,35 @@ public class DiffSwerveModule {
         motor2.set(ControlMode.PercentOutput, 0.0);
     }
     
+    /**
+     * @param drive - throttle power
+     * @param target - the target position in native ticks
+     * 
+     *      sets the module's position setpoint to target while trying to hold desired throttle
+     *      TODO: add rescaling for case when there is not enough power to meet demands
+     */
     public void setPositionAndSpeedNative(double drive, int target) {
         int diff = MathUtil.boundHalfAngleNative(target - (int)getMotor2Pos(), STEERING_COUNTS_PER_REV);
-        double setpoint = getMotor2Pos() + diff;
+        double setpoint = getMotor2Pos() + diff;//set point in enc counts
         motor2.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, drive);
-        motor1.follow(motor1, FollowerType.AuxOutput1);
+        motor1.follow(motor1, FollowerType.AuxOutput1);//follow motor2 but invert drive signal
     }
     
+    /**
+     * @param drive - throttle power
+     * @param target - desired position in radians
+     * 
+     */
     public void setPositionAndSpeedRad(double drive, double rad) {
         int target = (int) (MathUtil.wrapAngleRad(rad)/(2 * Math.PI) * DiffSwerveModule.STEERING_COUNTS_PER_REV);
         setPositionAndSpeedNative(drive, target);
     }
     
+    /**
+     * @param drive - desired vector of motion for the module
+     * 
+     *      Set the angle and velocity of the module, but setpoint is packaged as a vector
+     */
     public void setToVectorDumb(Vector2d drive) {
         if(drive.getMagnitude() < SMALL_NUMBER) {
             setPositionAndSpeedRad(0.0, getModulePositionRad());
@@ -154,6 +196,15 @@ public class DiffSwerveModule {
         setPositionAndSpeedRad(drive.getMagnitude(), drive.getAngle());
     }
     
+    /**
+     * 
+     * @param drive - desired motion vector
+     * 
+     *      Set the module to a given motion vector, but only move the module the minimum amount necessary
+     *      
+     *      Example: If the input suddenly reverses direction, this method will reverse the wheel speed
+     *      instead of turning the whole module.
+     */
     public void setToVectorSmart(Vector2d drive) {
         double pow = drive.getMagnitude();
         if(pow < SMALL_NUMBER) {

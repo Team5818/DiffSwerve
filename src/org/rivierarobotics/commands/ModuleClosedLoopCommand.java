@@ -8,38 +8,32 @@ import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ModuleClosedLoopCommand extends Command{
+    
+    /**
+     * Command for testing individual modules in closed loop
+     */
     
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;
     
     private DiffSwerveModule mod1, mod2;
-    private Joystick velStick;
-    private Joystick rotStick;
+    private Joystick stick;
    
-    public ModuleClosedLoopCommand(Joystick vel, Joystick spin) {
+    public ModuleClosedLoopCommand(Joystick js) {
         requires(Robot.runningrobot.dt);
         mod1 = Robot.runningrobot.dt.getModule(ModuleID.FL);
         mod2 = Robot.runningrobot.dt.getModule(ModuleID.BR);
-        velStick = vel;
-        rotStick = spin;
+        stick = js;
     }
     
     @Override
     public void execute() {
-        double vel;
         Vector2d transVec;
-        if(MathUtil.outOfDeadband(velStick, DEADBAND)){
-             vel = MathUtil.adjustDeadband(velStick, DEADBAND, true, false).getY();
-        }
-        else {
-            vel = 0.0;
-        }
         
-        if(MathUtil.outOfDeadband(rotStick, DEADBAND)) {
-            transVec = MathUtil.adjustDeadband(rotStick, DEADBAND, false, false);
+        if(MathUtil.outOfDeadband(stick, DEADBAND)) {
+            transVec = MathUtil.adjustDeadband(stick, DEADBAND, false, false);
         }
         else {
             transVec = new Vector2d(0.0,0.0);

@@ -1,7 +1,5 @@
 package org.rivierarobotics.mathutil;
 
-import edu.wpi.first.wpilibj.DriverStation;
-
 /**
  * 
  * contains swerve-specific math operations

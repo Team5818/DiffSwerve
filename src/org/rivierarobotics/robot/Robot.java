@@ -1,10 +1,6 @@
 package org.rivierarobotics.robot;
 
-import org.rivierarobotics.commands.ModuleClosedLoopCommand;
-import org.rivierarobotics.commands.ModuleOpenLoopCommand;
 import org.rivierarobotics.drivers.Driver;
-import org.rivierarobotics.subsystems.DiffSwerveModule;
-import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 import edu.wpi.first.wpilibj.IterativeRobot;

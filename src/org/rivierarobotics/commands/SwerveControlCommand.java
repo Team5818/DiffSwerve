@@ -9,6 +9,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class SwerveControlCommand extends Command{
+    /**
+     * Command for joystick control of swerve drivetrain
+     */
     
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;
@@ -30,6 +33,7 @@ public class SwerveControlCommand extends Command{
         Vector2d transVec;
         double spinVal;
         if(MathUtil.outOfDeadband(transStick, DEADBAND)){
+            //fetch field-centered translation vector
              transVec = MathUtil.adjustDeadband(transStick, DEADBAND, true, false).rotate(Math.PI/2);
         }
         else {
@@ -37,6 +41,7 @@ public class SwerveControlCommand extends Command{
         }
         
         if(MathUtil.outOfDeadband(rotStick, DEADBAND)) {
+            //fetch scalar-valued spin parameter
              spinVal = MathUtil.adjustDeadband(rotStick, DEADBAND, true, true).getX();
              setHeading = dt.getGyroHeading();//in degrees for more intuitive P-gain
         }
@@ -46,10 +51,11 @@ public class SwerveControlCommand extends Command{
                 spinVal = 0.0;
             }
             else {
+                //if the driver is not trying to spin, try to keep the robot from twisting
                 spinVal = kHeading*MathUtil.boundHalfAngleDeg(setHeading - dt.getGyroHeading());
             }
         }
-        dt.swerve(spinVal, transVec);
+        dt.swerve(spinVal, transVec);//lets swerve!
     }
 
     

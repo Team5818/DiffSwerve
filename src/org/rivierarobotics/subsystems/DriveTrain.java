@@ -1,18 +1,20 @@
 package org.rivierarobotics.subsystems;
 
+import org.rivierarobotics.commands.SwerveControlCommand;
+import org.rivierarobotics.mathutil.SwerveCalculator;
+import org.rivierarobotics.mathutil.Vector2d;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.robot.RobotConstants;
 import org.rivierarobotics.subsystems.DiffSwerveModule.ModuleID;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.rivierarobotics.commands.SwerveControlCommand;
-import org.rivierarobotics.mathutil.MathUtil;
-import org.rivierarobotics.mathutil.SwerveCalculator;
-import org.rivierarobotics.mathutil.Vector2d;
 
-
+/**
+ * Simple swerve drivetrain subsystem. Should eventually have 4 modules, but currently only has 2 (hence the comments).
+ *
+ */
 public class DriveTrain extends Subsystem {
 
     private DiffSwerveModule fl;
@@ -39,6 +41,13 @@ public class DriveTrain extends Subsystem {
         return ypr[0];
     }
 
+    /**
+     * @param rot - desired rotational velocity of the robot
+     * @param trans- desired field-centric translation vector
+     * 
+     * Coordinates the classic spinning-and-translating motion of a field-centered independent swerve
+     *
+     */
     public void swerve(double rot, Vector2d trans) {
         Vector2d[] swerveVecs = SwerveCalculator.calculateAllModules(Math.toRadians(getGyroHeading()), rot, trans, fl.getPosVec(), br.getPosVec());
         fl.setToVectorSmart(swerveVecs[0]);
