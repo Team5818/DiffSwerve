@@ -19,7 +19,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class SimulateSwerve {
     
     public static SimpleMatrix simulate() {
-        String parentDir = "/home/petey/Documents/RoboticsCode/DiffSwerve/simulation/";
+        String parentDir = "/home/jproney/Documents/RoboticsCode/DiffSwerve/simulation/";//change this to your directory
         try {
             //Simulation time params
             double dt = .005;
