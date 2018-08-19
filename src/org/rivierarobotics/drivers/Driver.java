@@ -5,6 +5,9 @@ import org.rivierarobotics.robot.RobotConstants;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class Driver {
+    /**
+     * Class to encapsulate joysticks and buttons
+     */
     
     public Joystick leftJoy;
     public Joystick rightJoy;

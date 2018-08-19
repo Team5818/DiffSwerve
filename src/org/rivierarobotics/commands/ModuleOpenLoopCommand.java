@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class ModuleOpenLoopCommand extends Command{
+    /**
+     * Command for testing individual modules in open loop
+     */
     
     public static final Vector2d DEADBAND = new Vector2d(.1, .1);
     public static final double kHeading = .01;

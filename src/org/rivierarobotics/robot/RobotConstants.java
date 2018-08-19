@@ -26,9 +26,10 @@ public class RobotConstants {
     
     public static final int BUTTONS_PORT = 2;
 
-    public static final double ROBOT_LENGTH = 10.0;
+    //these dimensions aren't exactly right, but it's the ratio that's important
+    public static final double ROBOT_LENGTH = 30.0;
 
-    public static final double ROBOT_WIDTH = 10.0;
+    public static final double ROBOT_WIDTH = 30.0;
     
 
 }
